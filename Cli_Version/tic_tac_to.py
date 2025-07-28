@@ -1,11 +1,11 @@
-# TODO: Quit at the start of the program & start at the end
+import random
 # TODO: Some color or formatting of the text
-# TODO: restart should not ask about the name and symbol again
 # TODO: some doc string and clean code
 
 class Menu:
 
-    def start_menu(self):
+    @staticmethod
+    def start_menu():
         while True:
             start_quit = input(
                 "Welcome For Tic-Tac-To game\n1)Start game\n2)Quit Game\n1 or 2: "
@@ -15,9 +15,10 @@ class Menu:
             elif start_quit == "2":
                 return False
             else:
-                print("You should Choose just 1 or 2 ")
+                print("\nYou should Choose 1 or 2\n")
 
-    def end_menu(self):
+    @staticmethod
+    def end_menu():
         while True:
             restart_quit = input("1)Restart\n2)Quit\n1 or 2: ")
             if restart_quit == "1":
@@ -25,15 +26,15 @@ class Menu:
             elif restart_quit == "2":
                 return False
             else:
-                print("You should Choose just 1 or 2 ")
+                print("\nYou should Choose 1 or 2\n")
 
 
 class Board:
 
     def __init__(self):
-        print("Player 1")
+        print("\nPlayer 1")
         self.player1 = Player()
-        print("Player 2")
+        print("\nPlayer 2")
         self.player2 = Player()
         self.board = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
         self._win_combinations = [
@@ -53,15 +54,10 @@ class Board:
                 break
 
     def check_symbol(self):
-        while True:
-            if self.player1.symbol == self.player2.symbol:
-                print("*" * 60)
-                print("Valid symbol every player should have uniq symbol")
-                print("*" * 60)
-                print(f"{self.player2.name} Put your symbol again")
-                self.player2.set_symbol()
-            else:
-                break
+        if self.player1.symbol == "O":
+            self.player2.symbol = "X"
+        elif self.player1.symbol == "X":
+            self.player2.symbol = "O"
 
     def print_board(self):
         for i in range(0, 9, 3):
@@ -80,29 +76,33 @@ class Board:
             else:
                 print("Invalid")
 
-    def is_balance(self):
+    def is_board_full(self):
         for i in self.board:
-            if i in "123456789":
+            if i.isdigit():
                 return False
         return True
 
     def winner(self):
         for combo in self._win_combinations:
             if (self.board[combo[0]] == self.board[combo[1]] == self.board[combo[2]]):
-                return self.board[combo[0]]
+                return True
 
     def update_board(self):
         while True:
             self._choose_position(self.player1)
-            if self.winner():
-                return self.winner()
-            if self.is_balance():
+            
+            is_player1_win = self.winner()
+            if is_player1_win:
+                return self.player1.name
+            if self.is_board_full():
                 return False
 
             self._choose_position(self.player2)
-            if self.winner():
-                return self.winner()
-            if self.is_balance():
+            
+            is_player2_win = self.winner()
+            if is_player2_win:
+                return self.player2.name
+            if self.is_board_full():
                 return False
 
     def restart_board(self):
@@ -119,7 +119,7 @@ class Player:
         while True:
             name = input("Put your name only letters: ")
             if name.isalpha():
-                print(f"Hello {name} you are welcome")
+                print(f"\nHello {name} you are welcome\n")
                 self.name = name
                 break
             else:
@@ -128,33 +128,25 @@ class Player:
                 )
 
     def set_symbol(self):
-        while True:
-            symbol = input(f"Symbol of {self.name} is: ")
-            if len(symbol) == 1 and not symbol.isdigit():
-                self.symbol = symbol.upper()
-                break
-            else:
-                print(f"You should write one character no like that {symbol}.")
+        random_index = random.randint(0, 1)
+        self.symbol = ["X", "O"][random_index]
 
 
 class Game:
 
-    def __init__(self):
-        self.menu = Menu()
-
-    def start_game(self):
-        if self.menu.start_menu():
+    def init_game(self):
+        if Menu.start_menu():
             self.board = Board()
             self.board.check_name()
             self.board.check_symbol()
             return True
 
-    def middle_game(self):
+    def play_game(self):
         self.board.print_board()
         return self.board.update_board()
 
     def end_game(self):
-        return self.menu.end_menu()
+        return Menu.end_menu()
 
 
 def main():
@@ -162,16 +154,33 @@ def main():
     my_game = Game()
     result = None
 
-    if my_game.start_game():
-        result = my_game.middle_game()
+    init_game = my_game.init_game()
 
-    if result:
-        print(f"The {result} is Win. ")
-    else:
-        print("No one win.")
+    while True:
+        if init_game:
+            result = my_game.play_game()
+        else:
+            break
 
-    if my_game.menu.end_menu():
-        main()
+        if result:
+            print(f"{result} is The Winner. ")
+        else:
+            print("No one win.")
+
+        if not Menu.end_menu():
+            print("\n" * 100)
+            break
+        else:
+            my_game.board.restart_board()
+            print("\n" * 100)
 
 if __name__ == "__main__":
-    main()
+
+    try:
+        main()
+
+    except KeyboardInterrupt:
+        print()
+
+    finally:
+        print("\nEnd The Game.")
