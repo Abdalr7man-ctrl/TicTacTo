@@ -1,5 +1,4 @@
 import random
-# TODO: Some color or formatting of the text X by the color and O by the color
 # TODO: make the message of the app more bigger or asci
 # TODO: some doc string and clean code
 
@@ -55,10 +54,10 @@ class Board:
                 break
 
     def check_symbol(self):
-        if self.player1.symbol == "O":
-            self.player2.symbol = "X"
-        elif self.player1.symbol == "X":
-            self.player2.symbol = "O"
+        if self.player1.symbol == "\033[33mO\033[0m":
+            self.player2.symbol = "\033[31mX\033[0m"
+        elif self.player1.symbol == "\033[31mX\033[0m":
+            self.player2.symbol = "\033[33mO\033[0m"
 
     def print_board(self):
         for i in range(0, 9, 3):
@@ -129,7 +128,9 @@ class Player:
 
     def set_symbol(self):
         random_index = random.randint(0, 1)
-        self.symbol = ["X", "O"][random_index]
+        orange_O = "\033[33mO\033[0m"
+        red_X = "\033[31mX\033[0m"
+        self.symbol = [red_X, orange_O][random_index]
 
 
 class Game:
