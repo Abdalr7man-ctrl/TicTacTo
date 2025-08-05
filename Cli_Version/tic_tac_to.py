@@ -1,5 +1,6 @@
 import random
-# TODO: Some color or formatting of the text
+# TODO: Some color or formatting of the text X by the color and O by the color
+# TODO: make the message of the app more bigger or asci
 # TODO: some doc string and clean code
 
 class Menu:
@@ -89,8 +90,8 @@ class Board:
 
     def update_board(self):
         while True:
+
             self._choose_position(self.player1)
-            
             is_player1_win = self.winner()
             if is_player1_win:
                 return self.player1.name
@@ -98,14 +99,13 @@ class Board:
                 return False
 
             self._choose_position(self.player2)
-            
             is_player2_win = self.winner()
             if is_player2_win:
                 return self.player2.name
             if self.is_board_full():
                 return False
 
-    def restart_board(self):
+    def reset(self):
         self.board = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 
@@ -171,16 +171,14 @@ def main():
             print("\n" * 100)
             break
         else:
-            my_game.board.restart_board()
+            my_game.board.reset()
             print("\n" * 100)
 
 if __name__ == "__main__":
 
     try:
         main()
-
     except KeyboardInterrupt:
         print()
-
     finally:
         print("\nEnd The Game.")
